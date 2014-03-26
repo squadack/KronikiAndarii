@@ -390,7 +390,11 @@ void GameMaster::endFight(Enemy *enemy, FightResult result)
 					currentQuest_->setTargetField(currentQuest_->employerField());
 				} else {
 					Prize *prize = mergePrizes(enemy->prize(), currentQuest_->prize());
-					grantPrize(currentPlayer_, prize, true);
+					grantPrize(currentPlayer_, prize, false);
+// 					grantPrize kończy turę jeśli trzeci argument == true, a tego tu nie chcemy
+					determinePossibleActions();
+					actionPanel_->displayActions(possibleActions_);
+// 					odswiezam mozliwe akcje (nie wiem czy to najlepszy sposób na to, lolz)
 					delete prize;
 					currentPlayer_->removeQuest(currentQuest_->id());
 					currentQuest_ = nullptr;
@@ -398,7 +402,9 @@ void GameMaster::endFight(Enemy *enemy, FightResult result)
 				}
 			}
 		}
-		grantPrize(currentPlayer_, enemy->prize(), true);
+		grantPrize(currentPlayer_, enemy->prize(), false); 
+		determinePossibleActions();
+		actionPanel_->displayActions(possibleActions_);
 		break;
 	case FightResult::Retreat:
 		gameCycle_->endTurn();
